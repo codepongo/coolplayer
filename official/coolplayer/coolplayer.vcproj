@@ -2202,6 +2202,18 @@
 				</FileConfiguration>
 			</File>
 		</Filter>
+		<Filter
+			Name="exception"
+			>
+			<File
+				RelativePath="..\ExceptionReportor\ExceptionReport.c"
+				>
+			</File>
+			<File
+				RelativePath="..\ExceptionReportor\ExceptionReport.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="res\coolplayer.exe.manifest"
 			>
