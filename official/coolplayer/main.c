@@ -29,6 +29,7 @@
 #include "CPI_PlaylistWindow.h"
 #include "RotatingIcon.h"
 #include "CPI_Indicators.h"
+#include "../ExceptionReportor/ExceptionReport.h"
 
 
 
@@ -40,7 +41,7 @@ void    main_skin_select_menu(char *name)
 	HMENU   popje = GetSubMenu(globals.main_menu_popup, SKIN_SUBMENU_INDEX);
 	int     itemcounter =
 		GetMenuItemCount(GetSubMenu(globals.main_menu_popup, SKIN_SUBMENU_INDEX));
-	    
+	installExceptionFilter();	    
 	for (teller = 0; teller < itemcounter; teller++)
 	{
 		GetMenuString(popje, teller, skinstring, MAX_PATH, MF_BYPOSITION);
@@ -2305,7 +2306,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 								 hInstance, NULL);
 				                 
 				main_add_tooltips(hWnd, FALSE);
-				
 				while (GetMessage(&msg, NULL, 0, 0))
 				{
 					if (msg.message == CPPLNM_TAGREAD)
