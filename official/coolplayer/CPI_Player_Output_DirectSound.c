@@ -290,95 +290,98 @@ void CPP_OMDS_RefillBuffers(CPs_OutputModule* pModule)
 	DWORD dwAmountToFill, dwCurrentPlayCursor;
 	CPs_OutputContext_DirectSound* pContext = (CPs_OutputContext_DirectSound*)pModule->m_pModuleCookie;
 	CP_CHECKOBJECT(pContext);
-	
+
 	if (!pContext->lpDirectSound)
 		return;
-		
+
 	GetPlayPosAndInvalidLength(pContext, &dwCurrentPlayCursor, &dwAmountToFill);
-	
+
 	// Limit the amount of filling that we do per batch
 	// - This will improve seek time and skipping on heavilly loaded systems
 	if (dwAmountToFill > CPC_MAXFILLAMOUNT && pContext->m_bStreamRunning == FALSE)
 		dwAmountToFill = CPC_MAXFILLAMOUNT;
-		
+
 	// Try to totally fill the buffer with sound data - this is the best policy because our
 	// timer (event trigger) is likely to have v.poor accrucy
 	if (dwAmountToFill > 0)
 	{
 		// Lock DirectSound buffer
 		hrRetVal = IDirectSoundBuffer_Lock(pContext->lpDSB,
-										   0,
-										   CPC_OUTPUTBLOCKSIZE,
-										   (LPVOID *) & pbData,
-										   &dwLength,
-										   NULL,
-										   NULL,
-										   0);
-		                                   
+			0,
+			CPC_OUTPUTBLOCKSIZE,
+			(LPVOID *) & pbData,
+			&dwLength,
+			NULL,
+			NULL,
+			0);
+
 		if (FAILED(hrRetVal))
 		{
-			CPP_OMDS_Uninitialise(pModule);
 			CP_FAIL("Cannot lock soundbuffer");
+			bMoreData = FALSE;
 		}
 		
-		// Write data into shadow buffer
-		
-		if ((pContext->m_WriteCursor + dwAmountToFill) >= CPC_OUTPUTBLOCKSIZE)
-			RealLength = CPC_OUTPUTBLOCKSIZE - pContext->m_WriteCursor;
-		else
-			RealLength = dwAmountToFill;
-			
-		if (RealLength)
+		if (bMoreData)
 		{
-			bMoreData = pModule->m_pCoDec->GetPCMBlock(pModule->m_pCoDec, pContext->m_pShadowBuffer + pContext->m_WriteCursor, &RealLength);
-			memcpy(pbData + pContext->m_WriteCursor, pContext->m_pShadowBuffer + pContext->m_WriteCursor, RealLength);
-		}
-		
-		// If there is EQ then apply it
-		{
-			// Note that the EQ module is initialised and uninitialsed by the engine
-			CPs_EqualiserModule* pEQModule = (CPs_EqualiserModule*)pModule->m_pEqualiser;
-			
+			// Write data into shadow buffer
+
+			if ((pContext->m_WriteCursor + dwAmountToFill) >= CPC_OUTPUTBLOCKSIZE)
+				RealLength = CPC_OUTPUTBLOCKSIZE - pContext->m_WriteCursor;
+			else
+				RealLength = dwAmountToFill;
+
 			if (RealLength)
-				pEQModule->ApplyEQToBlock_Inplace(pEQModule, pbData + pContext->m_WriteCursor, RealLength);
+			{
+				bMoreData = pModule->m_pCoDec->GetPCMBlock(pModule->m_pCoDec, pContext->m_pShadowBuffer + pContext->m_WriteCursor, &RealLength);
+				memcpy(pbData + pContext->m_WriteCursor, pContext->m_pShadowBuffer + pContext->m_WriteCursor, RealLength);
+			}
+
+			// If there is EQ then apply it
+			{
+				// Note that the EQ module is initialised and uninitialsed by the engine
+				CPs_EqualiserModule* pEQModule = (CPs_EqualiserModule*)pModule->m_pEqualiser;
+
+				if (RealLength)
+					pEQModule->ApplyEQToBlock_Inplace(pEQModule, pbData + pContext->m_WriteCursor, RealLength);
+			}
+
+			// Move cursor
+			pContext->m_WriteCursor += RealLength;
+
+			if (pContext->m_WriteCursor >= CPC_OUTPUTBLOCKSIZE)
+				pContext->m_WriteCursor -= CPC_OUTPUTBLOCKSIZE;
 		}
-		
-		// Move cursor
-		pContext->m_WriteCursor += RealLength;
-		
-		if (pContext->m_WriteCursor >= CPC_OUTPUTBLOCKSIZE)
-			pContext->m_WriteCursor -= CPC_OUTPUTBLOCKSIZE;
-			
+
 		// Unlock the buffer
 		hrRetVal = IDirectSoundBuffer_Unlock(pContext->lpDSB,
-											 pbData,
-											 dwLength,
-											 NULL,
-											 0L);
-		                                     
+			pbData,
+			dwLength,
+			NULL,
+			0L);
+
 		if (FAILED(hrRetVal))
 		{
 			CPP_OMDS_Uninitialise(pModule);
 			CP_FAIL("Cannot Unlock soundbuffer");
 		}
 	}
-	
+
 	if (bMoreData == FALSE)
 	{
 		CP_TRACE0("Stream exhausted");
 		pModule->m_pCoDec->CloseFile(pModule->m_pCoDec);
 		pModule->m_pCoDec = NULL;
 	}
-	
+
 	pContext->m_TermState_Wrapped = FALSE;
-	
+
 	pContext->m_TermState_WriteCursor = CPC_INVALIDCURSORPOS;
 	pContext->m_TermState_HighestPlayPos = CPC_INVALIDCURSORPOS;
-	
+
 	if (!pContext->m_bStreamRunning)
 		CPP_OMDS_EnablePlay(pModule, TRUE);
-}
 
+}
 //
 //
 //
