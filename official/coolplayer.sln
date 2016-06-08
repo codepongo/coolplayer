@@ -4,8 +4,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "coolplayer", "coolplayer\coolplayer.vcproj", "{C66A8739-8C08-42BA-B3CF-31846B2BD172}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6267595F-4FBB-4A33-A821-62716B04AC7B} = {6267595F-4FBB-4A33-A821-62716B04AC7B}
-		{F45F76CE-8071-4946-87E0-F9C9062EF861} = {F45F76CE-8071-4946-87E0-F9C9062EF861}
 		{3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5} = {3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5}
+		{F45F76CE-8071-4946-87E0-F9C9062EF861} = {F45F76CE-8071-4946-87E0-F9C9062EF861}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mad", "mad\mad.vcproj", "{6267595F-4FBB-4A33-A821-62716B04AC7B}"
@@ -18,6 +18,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vorbis", "vorbis\vorbis.vcp
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "zlib\zlib.vcproj", "{3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpengine", "cpengine\cpengine.vcproj", "{91A1A3C4-EE28-4A91-AAAA-BFAD3FDDD61F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6267595F-4FBB-4A33-A821-62716B04AC7B} = {6267595F-4FBB-4A33-A821-62716B04AC7B}
+		{3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5} = {3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5}
+		{F45F76CE-8071-4946-87E0-F9C9062EF861} = {F45F76CE-8071-4946-87E0-F9C9062EF861}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +52,10 @@ Global
 		{3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5}.Debug|Win32.Build.0 = Debug|Win32
 		{3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5}.Release|Win32.ActiveCfg = Release|Win32
 		{3A9FFF7B-E500-41F3-BCDB-F6ADAA5466E5}.Release|Win32.Build.0 = Release|Win32
+		{91A1A3C4-EE28-4A91-AAAA-BFAD3FDDD61F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{91A1A3C4-EE28-4A91-AAAA-BFAD3FDDD61F}.Debug|Win32.Build.0 = Debug|Win32
+		{91A1A3C4-EE28-4A91-AAAA-BFAD3FDDD61F}.Release|Win32.ActiveCfg = Release|Win32
+		{91A1A3C4-EE28-4A91-AAAA-BFAD3FDDD61F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
